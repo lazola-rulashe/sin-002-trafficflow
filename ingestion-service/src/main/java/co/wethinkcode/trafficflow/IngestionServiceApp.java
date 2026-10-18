@@ -66,11 +66,12 @@ public class IngestionServiceApp {
                 if (active_flag.equals("N/A") || active_flag.equals("unknown")) {
                     active_flag = "TBD";
                 }
+                boolean active = true;
                 if (active_flag.toLowerCase(Locale.ROOT).equals("true") || active_flag.toLowerCase(Locale.ROOT).equals("yes") || active_flag.toLowerCase(Locale.ROOT).equals("1") || active_flag.toLowerCase(Locale.ROOT).equals("y")){
-                    active_flag = "true";
+                    active = true;
                 }
                 if (active_flag.toLowerCase(Locale.ROOT).equals("false") || active_flag.toLowerCase(Locale.ROOT).equals("no") || active_flag.toLowerCase(Locale.ROOT).equals("0") || active_flag.toLowerCase(Locale.ROOT).equals("n")){
-                    active_flag = "false";
+                    active = false;
                 }
 
                 String cleanedRow = intersection_id + "," + district + "," + signal_type + "," + active_flag;
@@ -86,7 +87,7 @@ public class IngestionServiceApp {
                 record.put("Intersection_id", intersection_id);
                 record.put("District", district);
                 record.put("Signal_type", signal_type);
-                record.put("Active_flag", active_flag);
+                record.put("Active_flag", active);
 
                 array.add(record);
 
