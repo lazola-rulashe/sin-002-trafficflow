@@ -85,6 +85,7 @@ mvn package
 ## Run
 
 ```
+cd ingestion-service
 java -jar target/ingestion-service.jar
 ```
 
@@ -97,6 +98,14 @@ No automated tests yet. Manually verify it's up:
 
 ```
 curl http://localhost:7020/health   # -> OK
+cutl http://localhost:7030/records  # -> This is how you get the cleaned CSV content
+```
+
+## Killing Ports
+
+```
+sudo lsof -i:7020  # -> checks the ports that are currently running
+kill -9 {PID}  # -> kills the running port via the PID number
 ```
 
 To add real tests, add JUnit 5 + the Surefire plugin to `pom.xml`, put tests under
