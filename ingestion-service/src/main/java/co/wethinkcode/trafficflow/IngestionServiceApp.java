@@ -1,35 +1,36 @@
 package co.wethinkcode.trafficflow;
 
 import io.javalin.Javalin;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 public class IngestionServiceApp {
-    private static String cleanedData = "";
+
+    public static JSONArray cleanedData;
 
     public static void main(String[] args) {
-        cleanedData = cleanedRecords();
         Javalin app = Javalin.create().start(7020);
 
+        cleanedData = cleanedRecords();
+
         app.get("/health", ctx -> ctx.result("OK"));
-        app.get("/records", ctx -> {
-            ctx.result(cleanedData);
-        });
+        app.get("/records", ctx -> ctx.json(cleanedData));
 
     }
 
-    public static String cleanedRecords() {
+    public static JSONArray cleanedRecords() {
         Set<String> previousRows = new HashSet<>();
 
         StringBuilder result = new StringBuilder();
         result.append("Intersection_id,District,Signal_type,Active_flag\n");
+        JSONArray json = new JSONArray();
 
         try (InputStream input = IngestionServiceApp.class
                 .getResourceAsStream("/intersections-legacy.csv");
@@ -81,6 +82,14 @@ public class IngestionServiceApp {
                 previousRows.add(cleanedRow);
                 result.append(cleanedRow).append("\n");
 
+                Map<String, String> record = new HashMap<>();
+                record.put("Intersection_id", intersection_id);
+                record.put("District", district);
+                record.put("Signal_type", signal_type);
+                record.put("Active_flag", active_flag);
+
+                json.put(record);
+
             }
 
             } catch(IOException e){
@@ -90,7 +99,7 @@ public class IngestionServiceApp {
             }
 
 
-        return result.toString();
+        return json;
 
     }
     public static String toTitleCase(String text) {
@@ -115,17 +124,5 @@ public class IngestionServiceApp {
 
         return converted.toString();
     }
-//    public static Boolean validateBooleanValue(String value) {
-//        if (value == null || value.isBlank()) {
-//            return null;
-//        }
-//
-//        return switch (value.strip().toLowerCase(Locale.ROOT)) {
-//            case "true", "yes", "1", "y" -> true;
-//            case "false", "no", "n", "0" -> false;
-//            default -> null;
-//        };
-//    }
-
 
 }
