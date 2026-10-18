@@ -41,6 +41,8 @@ public class IngestionServiceApp {
                     continue;
                 }
 
+                String intersection_id = values[0].trim().toUpperCase();
+
 
             } catch(IOException e){
                 System.out.println("Could not read the file.");
