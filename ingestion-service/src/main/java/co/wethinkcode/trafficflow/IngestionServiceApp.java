@@ -12,12 +12,16 @@ import java.util.Locale;
 import java.util.Set;
 
 public class IngestionServiceApp {
+    private static String cleanedData = "";
 
     public static void main(String[] args) {
+        cleanedData = cleanedRecords();
         Javalin app = Javalin.create().start(7020);
 
         app.get("/health", ctx -> ctx.result("OK"));
-
+        app.get("/records", ctx -> {
+            ctx.result(cleanedData);
+        });
 
     }
 
@@ -61,7 +65,12 @@ public class IngestionServiceApp {
                 if (active_flag.equals("N/A") || active_flag.equals("unknown")) {
                     active_flag = "TBD";
                 }
-                validateBooleanValue(active_flag);
+                if (active_flag.toLowerCase(Locale.ROOT).equals("true") || active_flag.toLowerCase(Locale.ROOT).equals("yes") || active_flag.toLowerCase(Locale.ROOT).equals("1") || active_flag.toLowerCase(Locale.ROOT).equals("y")){
+                    active_flag = "true";
+                }
+                if (active_flag.toLowerCase(Locale.ROOT).equals("false") || active_flag.toLowerCase(Locale.ROOT).equals("no") || active_flag.toLowerCase(Locale.ROOT).equals("0") || active_flag.toLowerCase(Locale.ROOT).equals("n")){
+                    active_flag = "false";
+                }
 
                 String cleanedRow = intersection_id + "," + district + "," + signal_type + "," + active_flag;
 
@@ -106,17 +115,17 @@ public class IngestionServiceApp {
 
         return converted.toString();
     }
-    public static Boolean validateBooleanValue(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-
-        return switch (value.strip().toLowerCase(Locale.ROOT)) {
-            case "true", "yes", "1", "y" -> true;
-            case "false", "no", "n", "0" -> false;
-            default -> null;
-        };
-    }
+//    public static Boolean validateBooleanValue(String value) {
+//        if (value == null || value.isBlank()) {
+//            return null;
+//        }
+//
+//        return switch (value.strip().toLowerCase(Locale.ROOT)) {
+//            case "true", "yes", "1", "y" -> true;
+//            case "false", "no", "n", "0" -> false;
+//            default -> null;
+//        };
+//    }
 
 
 }
