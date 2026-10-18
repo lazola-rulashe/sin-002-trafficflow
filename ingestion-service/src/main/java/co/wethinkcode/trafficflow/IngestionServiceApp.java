@@ -33,14 +33,27 @@ public class IngestionServiceApp {
 
             reader.readLine();
 
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String[] values = line.split(",");
+                if (values.length < 4) {
+                    continue;
+                }
+
+
+            } catch(IOException e){
+                System.out.println("Could not read the file.");
+            } catch(NullPointerException e){
+                System.out.println("File not found on classpath");
+            }
 
         } catch (IOException e) {
-            System.out.println("Could not read the file.");
-        } catch (NullPointerException e) {
-            System.out.println("File not found on classpath");
+            throw new RuntimeException(e);
         }
 
         return result.toString();
+
     }
 
 }
