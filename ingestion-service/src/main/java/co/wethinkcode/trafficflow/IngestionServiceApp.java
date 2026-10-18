@@ -56,6 +56,11 @@ public class IngestionServiceApp {
                     signal_type = "TBD";
                 }
 
+                String active_flag = values[3].trim();
+                if (active_flag.equals("N/A") || active_flag.equals("unknown")) {
+                    active_flag = "TBD";
+                }
+
 
 
 
@@ -94,5 +99,7 @@ public class IngestionServiceApp {
 
         return converted.toString();
     }
+
+
 
 }
