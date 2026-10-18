@@ -44,6 +44,7 @@ public class IngestionServiceApp {
                 String intersection_id = values[0].trim().toUpperCase();
 
 
+
             } catch(IOException e){
                 System.out.println("Could not read the file.");
             } catch(NullPointerException e){
@@ -56,6 +57,28 @@ public class IngestionServiceApp {
 
         return result.toString();
 
+    }
+    public static String toTitleCase(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+
+        StringBuilder converted = new StringBuilder();
+
+        boolean convertNext = true;
+        for (char ch : text.toCharArray()) {
+            if (Character.isSpaceChar(ch)) {
+                convertNext = true;
+            } else if (convertNext) {
+                ch = Character.toTitleCase(ch);
+                convertNext = false;
+            } else {
+                ch = Character.toLowerCase(ch);
+            }
+            converted.append(ch);
+        }
+
+        return converted.toString();
     }
 
 }
