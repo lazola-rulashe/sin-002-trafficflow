@@ -13,7 +13,7 @@ import java.util.*;
 
 public class IngestionServiceApp {
 
-    public static JSONArray cleanedData;
+    public static List<Map<String, Object>> cleanedData;
 
     public static void main(String[] args) {
         Javalin app = Javalin.create().start(7020);
@@ -25,12 +25,12 @@ public class IngestionServiceApp {
 
     }
 
-    public static JSONArray cleanedRecords() {
+    public static List<Map<String, Object>> cleanedRecords() {
         Set<String> previousRows = new HashSet<>();
 
         StringBuilder result = new StringBuilder();
         result.append("Intersection_id,District,Signal_type,Active_flag\n");
-        JSONArray json = new JSONArray();
+        List<Map<String, Object>> array = new ArrayList<>();
 
         try (InputStream input = IngestionServiceApp.class
                 .getResourceAsStream("/intersections-legacy.csv");
@@ -82,13 +82,13 @@ public class IngestionServiceApp {
                 previousRows.add(cleanedRow);
                 result.append(cleanedRow).append("\n");
 
-                Map<String, String> record = new HashMap<>();
+                Map<String, Object> record = new HashMap<>();
                 record.put("Intersection_id", intersection_id);
                 record.put("District", district);
                 record.put("Signal_type", signal_type);
                 record.put("Active_flag", active_flag);
 
-                json.put(record);
+                array.add(record);
 
             }
 
@@ -99,7 +99,7 @@ public class IngestionServiceApp {
             }
 
 
-        return json;
+        return array;
 
     }
     public static String toTitleCase(String text) {
