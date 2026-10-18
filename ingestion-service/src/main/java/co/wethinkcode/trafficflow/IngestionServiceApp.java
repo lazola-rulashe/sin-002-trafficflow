@@ -48,23 +48,23 @@ public class IngestionServiceApp {
                 }
 
                 String intersection_id = values[0].trim().toUpperCase();
-                if (intersection_id == null || intersection_id.trim().isEmpty() || intersection_id.equals("N/A") || intersection_id.equals("unknown")) {
-                    intersection_id = "TBD";
+                if (intersection_id.trim().isEmpty() || intersection_id.equals("N/A") || intersection_id.equals("unknown")) {
+                    intersection_id = null;
                 }
 
                 String district = toTitleCase(values[1].trim());
-                if (district == null || district.trim().isEmpty() || district.equals("N/A") || district.equals("unknown")) {
-                    district = "TBD";
+                if (district.trim().isEmpty() || district.equals("N/A") || district.equals("unknown")) {
+                    district = null;
                 }
 
                 String signal_type = toTitleCase(values[2].trim());
-                if (signal_type == null || signal_type.trim().isEmpty() || signal_type.equals("N/A") || signal_type.equals("unknown")) {
-                    signal_type = "TBD";
+                if (signal_type.trim().isEmpty() || signal_type.equals("N/A") || signal_type.equals("unknown")) {
+                    signal_type = null;
                 }
 
                 String active_flag = values[3].trim();
                 if (active_flag.equals("N/A") || active_flag.equals("unknown")) {
-                    active_flag = "TBD";
+                    active_flag = null;
                 }
                 boolean active = true;
                 if (active_flag.toLowerCase(Locale.ROOT).equals("true") || active_flag.toLowerCase(Locale.ROOT).equals("yes") || active_flag.toLowerCase(Locale.ROOT).equals("1") || active_flag.toLowerCase(Locale.ROOT).equals("y")){
