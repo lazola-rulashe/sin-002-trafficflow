@@ -1,8 +1,6 @@
 package co.wethinkcode.trafficflow;
 
 import io.javalin.Javalin;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,8 +26,6 @@ public class IngestionServiceApp {
     public static List<Map<String, Object>> cleanedRecords() {
         Set<String> previousRows = new HashSet<>();
 
-        StringBuilder result = new StringBuilder();
-        result.append("Intersection_id,District,Signal_type,Active_flag\n");
         List<Map<String, Object>> array = new ArrayList<>();
 
         try (InputStream input = IngestionServiceApp.class
@@ -81,7 +77,6 @@ public class IngestionServiceApp {
                 }
 
                 previousRows.add(cleanedRow);
-                result.append(cleanedRow).append("\n");
 
                 Map<String, Object> record = new HashMap<>();
                 record.put("Intersection_id", intersection_id);
