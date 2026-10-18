@@ -63,8 +63,16 @@ public class IngestionServiceApp {
                 }
                 validateBooleanValue(active_flag);
 
+                String cleanedRow = intersection_id + "," + district + "," + signal_type + "," + active_flag;
 
+                if (previousRows.contains(cleanedRow)) {
+                    continue;
+                }
 
+                previousRows.add(cleanedRow);
+                result.append(cleanedRow).append("\n");
+
+            }
 
             } catch(IOException e){
                 System.out.println("Could not read the file.");
@@ -72,9 +80,6 @@ public class IngestionServiceApp {
                 System.out.println("File not found on classpath");
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         return result.toString();
 
