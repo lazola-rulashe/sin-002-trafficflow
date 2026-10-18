@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 public class IngestionServiceApp {
@@ -60,6 +61,7 @@ public class IngestionServiceApp {
                 if (active_flag.equals("N/A") || active_flag.equals("unknown")) {
                     active_flag = "TBD";
                 }
+                validateBooleanValue(active_flag);
 
 
 
@@ -99,7 +101,17 @@ public class IngestionServiceApp {
 
         return converted.toString();
     }
+    public static Boolean validateBooleanValue(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
 
+        return switch (value.strip().toLowerCase(Locale.ROOT)) {
+            case "true", "yes", "1", "y" -> true;
+            case "false", "no", "n", "0" -> false;
+            default -> null;
+        };
+    }
 
 
 }
