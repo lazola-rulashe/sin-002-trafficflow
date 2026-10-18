@@ -42,6 +42,9 @@ public class IngestionServiceApp {
                 }
 
                 String intersection_id = values[0].trim().toUpperCase();
+                if (intersection_id == null || intersection_id.trim().isEmpty() || intersection_id.equals("N/A") || intersection_id.equals("unknown")) {
+                    intersection_id = "TBD";
+                }
 
                 String district = toTitleCase(values[1].trim());
                 if (district == null || district.trim().isEmpty() || district.equals("N/A") || district.equals("unknown")) {
