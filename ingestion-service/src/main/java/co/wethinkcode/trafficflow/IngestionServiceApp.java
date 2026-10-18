@@ -43,6 +43,12 @@ public class IngestionServiceApp {
 
                 String intersection_id = values[0].trim().toUpperCase();
 
+                String district = toTitleCase(values[1].trim());
+                if (district == null || district.trim().isEmpty() || district.equals("N/A") || district.equals("unknown")) {
+                    district = "TBD";
+                }
+
+
 
 
             } catch(IOException e){
