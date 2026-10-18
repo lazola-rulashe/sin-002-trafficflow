@@ -48,6 +48,11 @@ public class IngestionServiceApp {
                     district = "TBD";
                 }
 
+                String signal_type = toTitleCase(values[2].trim());
+                if (signal_type == null || signal_type.trim().isEmpty() || signal_type.equals("N/A") || signal_type.equals("unknown")) {
+                    signal_type = "TBD";
+                }
+
 
 
 
