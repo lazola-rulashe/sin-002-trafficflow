@@ -22,7 +22,7 @@ public class IntersectionServiceApp {
 
         app.get("/health", ctx -> ctx.result("OK"));
 
-        app.get("/intersections", ctx -> {
+        app.get("/intersections/{Intersection_id}", ctx -> {
             try {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
@@ -41,15 +41,24 @@ public class IntersectionServiceApp {
                     intersections.add(jsonArray.getJSONObject(i).toMap());
                 }
 
-                ctx.json(intersections);
+                String requestedId = ctx.pathParam("Intersection_id");
+
 
                 for (Map<String, Object> inter : intersections) {
                     for (Map.Entry<String, Object> entry : inter.entrySet()) {
-                        ctx.json(entry.getKey() + ": " + entry.getValue());
+                        String intersectionId = (String) inter.get("Intersection_id");
+                        if (requestedId.equals(intersectionId)){
+                            ctx.json(inter);
+                            ctx.status(200);
+                            return;
+                        }
+                        ctx.result("Intersection unknown");
+                        ctx.status(404);
+
+
 
                     }
                 }
-
 
             }catch(Exception e){
                 ctx.status(503).result("Ingestion service unavailable " + e.getMessage());
