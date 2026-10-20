@@ -19,7 +19,7 @@ public class IngestionServiceApp {
         cleanedData = cleanedRecords();
 
         app.get("/health", ctx -> ctx.result("OK"));
-        app.get("/records", ctx -> ctx.json(cleanedData));
+        app.get("/intersections", ctx -> ctx.json(cleanedData));
 
     }
 
