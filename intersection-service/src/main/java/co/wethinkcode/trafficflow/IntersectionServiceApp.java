@@ -2,14 +2,20 @@ package co.wethinkcode.trafficflow;
 
 import io.javalin.Javalin;
 import io.javalin.json.JsonMapper;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class IntersectionServiceApp {
+    public static List<Map<String, Object>> intersections;
+
 
     public static void main(String[] args) {
         Javalin app = Javalin.create().start(7021);
@@ -28,8 +34,22 @@ public class IntersectionServiceApp {
                         HttpResponse.BodyHandlers.ofString()
                 );
 
-                ctx.result(response.body());
-                ctx.contentType("application/json");
+                JSONArray jsonArray = new JSONArray(response.body());
+                intersections = new ArrayList<>();
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    intersections.add(jsonArray.getJSONObject(i).toMap());
+                }
+
+                ctx.json(intersections);
+
+                for (Map<String, Object> inter : intersections) {
+                    for (Map.Entry<String, Object> entry : inter.entrySet()) {
+                        ctx.json(entry.getKey() + ": " + entry.getValue());
+
+                    }
+                }
+
 
             }catch(Exception e){
                 ctx.status(503).result("Ingestion service unavailable " + e.getMessage());
