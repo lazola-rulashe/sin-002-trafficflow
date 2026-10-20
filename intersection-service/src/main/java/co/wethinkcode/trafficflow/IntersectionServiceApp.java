@@ -1,6 +1,8 @@
 package co.wethinkcode.trafficflow;
 
 import io.javalin.Javalin;
+import io.javalin.json.JsonMapper;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -24,7 +26,9 @@ public class IntersectionServiceApp {
                     request,
                     HttpResponse.BodyHandlers.ofString()
             );
+
             ctx.result(response.body());
+            ctx.contentType("application/json");
         });
 
         // TODO (Validates intersection/district names (source of truth).)
