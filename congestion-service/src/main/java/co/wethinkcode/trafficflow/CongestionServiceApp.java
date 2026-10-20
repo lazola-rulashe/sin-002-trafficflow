@@ -18,7 +18,15 @@ public class CongestionServiceApp {
        });
 
        app.post("/congestion", ctx -> {
-
+           int newLevel = Integer.parseInt(ctx.body());
+           if(newLevel >=0 && newLevel <=8){
+               currentLevel = newLevel;
+               ctx.result("New level is : " + newLevel);
+               ctx.status(200);
+           }else{
+               ctx.result("This level is unknown");
+               ctx.status(400);
+           }
        });
 
 
