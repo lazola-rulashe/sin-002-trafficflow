@@ -17,6 +17,10 @@ public class CongestionServiceApp {
            ctx.result(response.toString());
        });
 
+       app.post("/congestion", ctx -> {
+
+       });
+
 
     }
 }
