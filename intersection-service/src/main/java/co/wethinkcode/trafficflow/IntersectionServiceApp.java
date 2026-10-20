@@ -17,24 +17,31 @@ public class IntersectionServiceApp {
         app.get("/health", ctx -> ctx.result("OK"));
 
         app.get("/intersections", ctx -> {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:7020/intersections"))
-                    .GET()
-                    .build();
-            HttpResponse<String> response = client.send(
-                    request,
-                    HttpResponse.BodyHandlers.ofString()
-            );
+            try {
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:7020/intersections"))
+                        .GET()
+                        .build();
+                HttpResponse<String> response = client.send(
+                        request,
+                        HttpResponse.BodyHandlers.ofString()
+                );
 
-            ctx.result(response.body());
-            ctx.contentType("application/json");
-        });
+                ctx.result(response.body());
+                ctx.contentType("application/json");
 
-        // TODO (Validates intersection/district names (source of truth).)
-        // Add domain endpoints for intersection-service here.
-    }
+            }catch(Exception e){
+                ctx.status(503).result("Ingestion service unavailable " + e.getMessage());
+            }
+
+                });
+
+
+                // TODO (Validates intersection/district names (source of truth).) // Add domain endpoints for intersection-service here.
+
 }
+    }
 
 // MQ TODO: publishes a periodic heartbeat to ActiveMQ queue MqConfig.HEARTBEAT_QUEUE at
 // MqConfig.BROKER_URL (see co.wethinkcode.trafficflow.mq.MqConfig), consumed by intersection-watchdog.
