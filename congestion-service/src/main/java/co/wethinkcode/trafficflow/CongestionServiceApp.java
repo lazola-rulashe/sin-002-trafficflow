@@ -10,8 +10,11 @@ public class CongestionServiceApp {
 
         app.get("/health", ctx -> ctx.result("OK"));
 
-        // TODO (Tracks the city-wide Congestion Level (0-8).)
-        // Add domain endpoints for congestion-service here.
+       app.get("/congestion", ctx ->{
+
+       });
+
+
     }
 }
 
