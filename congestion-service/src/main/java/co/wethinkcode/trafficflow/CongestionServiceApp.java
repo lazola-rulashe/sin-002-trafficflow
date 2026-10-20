@@ -1,6 +1,7 @@
 package co.wethinkcode.trafficflow;
 
 import io.javalin.Javalin;
+import org.json.JSONObject;
 
 public class CongestionServiceApp {
     public static int currentLevel = 0;
@@ -11,7 +12,9 @@ public class CongestionServiceApp {
         app.get("/health", ctx -> ctx.result("OK"));
 
        app.get("/congestion", ctx ->{
-
+           JSONObject response = new JSONObject();
+           response.put("level", currentLevel);
+           ctx.result(response.toString());
        });
 
 
