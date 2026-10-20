@@ -89,8 +89,7 @@ cd ingestion-service
 java -jar target/ingestion-service.jar
 ```
 
-Listens on port `7020`. Currently just exposes `/health` — the actual CSV
-parsing/cleaning logic is a TODO.
+Listens on port `7020`. 
 
 ## Test
 
