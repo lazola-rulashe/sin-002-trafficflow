@@ -41,7 +41,7 @@ No automated tests yet. Manually verify it's up:
 
 ```
 curl http://localhost:7021/health   # -> OK
-cutl http://localhost:7021/intersection/{id}  # -> This is how you get thhe details of a specific intersection id
+curl http://localhost:7021/intersection/{id}  # -> This is how you get thhe details of a specific intersection id
 ```
 
 ## Killing Ports

@@ -98,7 +98,7 @@ No automated tests yet. Manually verify it's up:
 
 ```
 curl http://localhost:7020/health   # -> OK
-cutl http://localhost:7030/records  # -> This is how you get the cleaned CSV content
+curl http://localhost:7020/intersection  # -> This is how you get the cleaned CSV content
 ```
 
 ## Killing Ports
