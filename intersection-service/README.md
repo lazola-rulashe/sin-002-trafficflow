@@ -29,6 +29,7 @@ mvn package
 ## Run
 
 ```
+cd intersection-service
 java -jar target/intersection-service.jar
 ```
 
@@ -40,6 +41,14 @@ No automated tests yet. Manually verify it's up:
 
 ```
 curl http://localhost:7021/health   # -> OK
+cutl http://localhost:7021/intersection/{id}  # -> This is how you get thhe details of a specific intersection id
+```
+
+## Killing Ports
+
+```
+sudo lsof -i:7020  # -> checks the ports that are currently running
+kill -9 {PID}  # -> kills the running port via the PID number
 ```
 
 To add real tests, add JUnit 5 + the Surefire plugin to `pom.xml`, put tests under
