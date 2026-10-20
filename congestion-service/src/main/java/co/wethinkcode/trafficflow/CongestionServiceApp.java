@@ -3,6 +3,7 @@ package co.wethinkcode.trafficflow;
 import io.javalin.Javalin;
 
 public class CongestionServiceApp {
+    public static int currentLevel = 0;
 
     public static void main(String[] args) {
         Javalin app = Javalin.create().start(7022);
