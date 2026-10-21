@@ -106,6 +106,10 @@ public class RoutingServiceApp {
 
         });
 
+        app.get("/congestion", ctx -> {
+
+        });
+
 
     }
 }
