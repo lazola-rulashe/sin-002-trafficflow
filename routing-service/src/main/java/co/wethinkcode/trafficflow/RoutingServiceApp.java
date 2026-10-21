@@ -102,22 +102,27 @@ public class RoutingServiceApp {
 
         });
 
-        app.get("/route/{fistId}/{lastId}", ctx -> {
+        app.get("/congestion", ctx -> {
+            try {
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:7022/congestion"))
+                        .GET()
+                        .build();
+                HttpResponse<String> response = client.send(
+                        request,
+                        HttpResponse.BodyHandlers.ofString()
+                );
+
+                ctx.result(response.body());
+
+            }catch(Exception e){
+                ctx.status(503).result("CongestionServiceApp is unreachable");
+            }
 
         });
 
-        app.get("/congestion", ctx -> {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:7022/congestion"))
-                    .GET()
-                    .build();
-            HttpResponse<String> response = client.send(
-                    request,
-                    HttpResponse.BodyHandlers.ofString()
-            );
-
-            ctx.result(response.body());
+        app.get("/route/{fistId}/{lastId}", ctx -> {
 
         });
 
