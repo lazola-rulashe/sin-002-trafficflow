@@ -81,8 +81,21 @@ public class RoutingServiceApp {
                     intersections.add(jsonArray.getJSONObject(i).toMap());
                 }
 
-                lastInterId = ctx.pathParam("id");
-                ctx.result(lastInterId);
+                String requestedId = ctx.pathParam("id");
+
+                for (Map<String, Object> inter : intersections) {
+                    for (Map.Entry<String, Object> entry : inter.entrySet()) {
+                        String intersectionId1 = (String) inter.get("id");
+                        if (requestedId.equals(intersectionId1)) {
+                            lastInterId = intersectionId1;
+                            ctx.status(200);
+                            return;
+                        }
+                        ctx.result("Intersection unknown");
+                        ctx.status(404);
+                    }
+                }
+
             }catch (Exception e){
                 ctx.status(404).result("Intersection ID unknown");
             }
