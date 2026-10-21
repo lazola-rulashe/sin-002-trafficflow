@@ -25,7 +25,7 @@ public class RoutingServiceApp {
             try {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://localhost:7022/intersections"))
+                        .uri(URI.create("http://localhost:7021/intersections"))
                         .GET()
                         .build();
                 HttpResponse<String> response = client.send(
@@ -66,7 +66,7 @@ public class RoutingServiceApp {
             try {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://localhost:7022/intersections"))
+                        .uri(URI.create("http://localhost:7021/intersections"))
                         .GET()
                         .build();
                 HttpResponse<String> response = client.send(
@@ -107,6 +107,17 @@ public class RoutingServiceApp {
         });
 
         app.get("/congestion", ctx -> {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:7022/congestion"))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+            );
+
+            ctx.result(response.body());
 
         });
 
