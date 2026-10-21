@@ -43,6 +43,28 @@ public class RoutingServiceApp {
 
 
         });
+
+        app.get("/intersections/{id}", ctx -> {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:7022/intersections"))
+                    .GET()
+                    .build();
+            HttpResponse<String> response = client.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+            );
+
+            JSONArray jsonArray = new JSONArray(response.body());
+            intersections = new ArrayList<>();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                intersections.add(jsonArray.getJSONObject(i).toMap());
+            }
+
+            lastInterId = ctx.pathParam("id");
+
+        });
     }
 }
 
