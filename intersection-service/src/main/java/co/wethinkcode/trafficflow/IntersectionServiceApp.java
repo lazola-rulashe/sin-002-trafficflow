@@ -22,6 +22,10 @@ public class IntersectionServiceApp {
 
         app.get("/health", ctx -> ctx.result("OK"));
 
+        app.get("/intersectios", ctx -> {
+            ctx.json(intersections);
+        });
+
         app.get("/intersections/{Intersection_id}", ctx -> {
             try {
                 HttpClient client = HttpClient.newHttpClient();
@@ -54,8 +58,6 @@ public class IntersectionServiceApp {
                         }
                         ctx.result("Intersection unknown");
                         ctx.status(404);
-
-
 
                     }
                 }
