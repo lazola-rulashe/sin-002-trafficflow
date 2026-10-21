@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class RoutingServiceApp {
     public static List<Map<String, Object>> intersections;
-    private static String firstInterId;
-    private static String lastInterId;
+    public static String firstInterId;
+    public static String lastInterId;
 
     public static void main(String[] args) {
         Javalin app = Javalin.create().start(7023);
@@ -40,7 +40,6 @@ public class RoutingServiceApp {
             }
 
             firstInterId = ctx.pathParam("id");
-
 
         });
 
