@@ -102,6 +102,10 @@ public class RoutingServiceApp {
 
         });
 
+        app.get("/route/{fistId}/{lastId}", ctx -> {
+
+        });
+
 
     }
 }
