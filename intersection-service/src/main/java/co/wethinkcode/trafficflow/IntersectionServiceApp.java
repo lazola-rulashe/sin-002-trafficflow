@@ -56,15 +56,16 @@ public class IntersectionServiceApp {
                         for (Map<String, Object> inter : intersections) {
                             String intersectionId = (String) inter.get("Intersection_id");
                             if (requestedId.equals(intersectionId)) {
+                                String district = (String) inter.get("District");
+                                if (!VALID_DISTRICTS.contains(district)) {
+                                    ctx.status(404).result("District not recognized");
+                                    return;
+                                }
                                 ctx.json(inter);
                                 ctx.status(200);
                                 return;
                             }
-                            String district = (String) inter.get("District");
-                            if (!VALID_DISTRICTS.contains(district)) {
-                                ctx.status(404).result("District not recognized");
-                                return;
-                            }
+
                         }
 
 
