@@ -44,7 +44,7 @@ public class RoutingServiceApp {
 
 
                 for (Map<String, Object> inter : intersections) {
-                    for (Map.Entry<String, Object> entry : inter.entrySet()) {
+
                         String intersectionId1 = (String) inter.get("Intersection_id");
                         if (requestedId.equals(intersectionId1)) {
                             firstInterId = intersectionId1;
@@ -54,7 +54,6 @@ public class RoutingServiceApp {
                         ctx.result("Intersection unknown");
                         ctx.status(404);
                     }
-                }
 
             }catch(Exception e){
                 ctx.status(404).result("Intersection ID unknown");
