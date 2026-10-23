@@ -10,6 +10,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class RoutingServiceApp {
     public static List<Map<String, Object>> intersections;
@@ -71,12 +72,29 @@ public class RoutingServiceApp {
                     .build();
 
 
-            // Send the request and get the response body as a String
             HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
 
             firstInterId = response1.body();
             lastInterId = response2.body();
+
+            Set<String> VALID_DISTRICTS = Set.of("Downtown", "Midtown", "Uptown", "Westside", "Eastside");
+
+
+            for (Map<String, Object> inter : intersections) {
+                String intersectionId = (String) inter.get("Intersection_id");
+                if (firstInterId.equals(intersectionId) || lastInterId.equals(intersectionId)) {
+                    String district = (String) inter.get("District");
+                    if (!VALID_DISTRICTS.contains(district)) {
+                        ctx.status(404).result("District not recognized");
+                        return;
+                    }
+                    ctx.json(inter);
+                    ctx.status(200);
+                    return;
+                }
+
+            }
 
 
 
