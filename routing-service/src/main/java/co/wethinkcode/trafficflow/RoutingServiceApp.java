@@ -50,8 +50,9 @@ public class RoutingServiceApp {
                         request,
                         HttpResponse.BodyHandlers.ofString()
                 );
+                ctx.result(response.body());
 
-                congestionLevel = Integer.parseInt(response.body());
+
 
             }catch(Exception e){
                 ctx.status(503).result("CongestionServiceApp is unreachable");
@@ -71,15 +72,24 @@ public class RoutingServiceApp {
                     .GET()
                     .build();
 
-
             HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
 
             firstInterId = response1.body();
             lastInterId = response2.body();
 
-            Set<String> VALID_DISTRICTS = Set.of("Downtown", "Midtown", "Uptown", "Westside", "Eastside");
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:7023/congestion"))
+                    .GET()
+                    .build();
 
+            HttpResponse<String> response = client.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+            );
+            congestionLevel = Integer.parseInt(response.body());
+
+            Set<String> VALID_DISTRICTS = Set.of("Downtown", "Midtown", "Uptown", "Westside", "Eastside");
 
             for (Map<String, Object> inter : intersections) {
                 String intersectionId = (String) inter.get("Intersection_id");
