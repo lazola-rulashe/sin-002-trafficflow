@@ -26,7 +26,7 @@ public class RoutingServiceApp {
         app.get("/intersections/{id}", ctx -> {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://localhost:7021/intersections/{id}"))
+                        .uri(URI.create("http://localhost:7021/intersections/" + ctx.pathParam("id")))
                         .GET()
                         .build();
                 HttpResponse<String> response = client.send(
@@ -40,12 +40,12 @@ public class RoutingServiceApp {
         app.get("/route/{firstId}/{lastId}", ctx -> {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request1 = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:7023/intersections/{id}"))
+                    .uri(URI.create("http://localhost:7023/intersections/" + ctx.pathParam("firstId")))
                     .GET()
                     .build();
 
             HttpRequest request2 = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:7023/intersections/{id}"))
+                    .uri(URI.create("http://localhost:7023/intersections/" + ctx.pathParam("lastId")))
                     .GET()
                     .build();
 
