@@ -47,23 +47,44 @@ public class IntersectionServiceApp {
         });
 
         app.get("/intersections/{id}", ctx -> {
-            try {
+                    try {
 
-                String requestedId = ctx.pathParam("id");
+                        String requestedId = ctx.pathParam("id");
 
-                for (Map<String, Object> inter : intersections) {
-                    String intersectionId = (String) inter.get("id");
-                    if (requestedId.equals(intersectionId)) {
-                        ctx.json(inter);
-                        ctx.status(200);
-                        return;
+                        for (Map<String, Object> inter : intersections) {
+                            String intersectionId = (String) inter.get("id");
+                            if (requestedId.equals(intersectionId)) {
+                                ctx.json(inter);
+                                ctx.status(200);
+                                return;
+                            }
+                        }
+
+
+                    } catch (Exception e) {
+                        ctx.status(404).result("Intersection not found " + e.getMessage());
                     }
+
+                });
+
+            app.get("/district/{name}", ctx -> {
+                try {
+
+                    String requestedName = ctx.pathParam("name");
+
+                    for (Map<String, Object> inter : intersections) {
+                        String districtName = (String) inter.get("name");
+                        if (requestedName.equals(districtName)) {
+                            ctx.json(inter);
+                            ctx.status(200);
+                            return;
+                        }
+                    }
+
+
+                }catch(Exception e){
+                    ctx.status(404).result("District name not found " + e.getMessage());
                 }
-
-
-            }catch(Exception e){
-                ctx.status(404).result("Intersection not found " + e.getMessage());
-            }
 
                 });
 
