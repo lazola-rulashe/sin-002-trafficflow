@@ -22,42 +22,16 @@ public class RoutingServiceApp {
         app.get("/health", ctx -> ctx.result("OK"));
 
         app.get("/intersections/{id}", ctx -> {
-            try {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://localhost:7021/intersections"))
+                        .uri(URI.create("http://localhost:7020/intersections/{id}"))
                         .GET()
                         .build();
                 HttpResponse<String> response = client.send(
                         request,
                         HttpResponse.BodyHandlers.ofString()
                 );
-
-                JSONArray jsonArray = new JSONArray(response.body());
-                intersections = new ArrayList<>();
-
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    intersections.add(jsonArray.getJSONObject(i).toMap());
-                }
-
-                String requestedId = ctx.pathParam("id");
-
-
-                for (Map<String, Object> inter : intersections) {
-
-                        String intersectionId1 = (String) inter.get("Intersection_id");
-                        if (requestedId.equals(intersectionId1)) {
-                            firstInterId = intersectionId1;
-                            ctx.status(200);
-                            return;
-                        }
-                        ctx.result("Intersection unknown");
-                        ctx.status(404);
-                    }
-
-            }catch(Exception e){
-                ctx.status(404).result("Intersection ID unknown");
-            }
+                ctx.json(response.body());
 
         });
 
@@ -83,7 +57,7 @@ public class RoutingServiceApp {
 
         });
 
-        app.get("/route/{fistId}/{lastId}", ctx -> {
+        app.get("/route/{firstId}/{lastId}", ctx -> {
 
         });
 
