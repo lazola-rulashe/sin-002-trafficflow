@@ -15,6 +15,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class IntersectionServiceApp {
     public static List<Map<String, Object>> intersections;
@@ -48,6 +49,7 @@ public class IntersectionServiceApp {
 
         app.get("/intersections/{id}", ctx -> {
                     try {
+                        Set<String> VALID_DISTRICTS = Set.of("Downtown", "Midtown", "Uptown", "Westside", "Eastside");
 
                         String requestedId = ctx.pathParam("id");
 
@@ -56,6 +58,11 @@ public class IntersectionServiceApp {
                             if (requestedId.equals(intersectionId)) {
                                 ctx.json(inter);
                                 ctx.status(200);
+                                return;
+                            }
+                            String district = (String) inter.get("District");
+                            if (!VALID_DISTRICTS.contains(district)) {
+                                ctx.status(404).result("District not recognized");
                                 return;
                             }
                         }
@@ -67,26 +74,7 @@ public class IntersectionServiceApp {
 
                 });
 
-            app.get("/district/{name}", ctx -> {
-                try {
 
-                    String requestedName = ctx.pathParam("name");
-
-                    for (Map<String, Object> inter : intersections) {
-                        String districtName = (String) inter.get("District");
-                        if (requestedName.equals(districtName)) {
-                            ctx.json(inter);
-                            ctx.status(200);
-                            return;
-                        }
-                    }
-
-
-                }catch(Exception e){
-                    ctx.status(404).result("District name not found " + e.getMessage());
-                }
-
-                });
 
 
                 // TODO (Validates intersection/district names (source of truth).) // Add domain endpoints for intersection-service here.
