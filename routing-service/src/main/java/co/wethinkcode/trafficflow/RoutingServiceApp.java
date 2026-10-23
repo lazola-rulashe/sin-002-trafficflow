@@ -59,6 +59,26 @@ public class RoutingServiceApp {
         });
 
         app.get("/route/{firstId}/{lastId}", ctx -> {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request1 = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:7023/intersections/{id}"))
+                    .GET()
+                    .build();
+
+            HttpRequest request2 = HttpRequest.newBuilder()
+                    .uri(URI.create("http://localhost:7023/intersections/{id}"))
+                    .GET()
+                    .build();
+
+
+            // Send the request and get the response body as a String
+            HttpResponse<String> response1 = client.send(request1, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+
+            firstInterId = response1.body();
+            lastInterId = response2.body();
+
+
 
         });
 
