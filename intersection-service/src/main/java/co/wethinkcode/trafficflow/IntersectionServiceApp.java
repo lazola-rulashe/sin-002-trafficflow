@@ -46,10 +46,10 @@ public class IntersectionServiceApp {
             ctx.json(intersections);
         });
 
-        app.get("/intersections/{Intersection_id}", ctx -> {
+        app.get("/intersections/{id}", ctx -> {
                     try {
 
-                        String requestedId = ctx.pathParam("Intersection_id");
+                        String requestedId = ctx.pathParam("id");
 
                         for (Map<String, Object> inter : intersections) {
                             String intersectionId = (String) inter.get("Intersection_id");
@@ -67,10 +67,10 @@ public class IntersectionServiceApp {
 
                 });
 
-            app.get("/district/{District}", ctx -> {
+            app.get("/district/{name}", ctx -> {
                 try {
 
-                    String requestedName = ctx.pathParam("District");
+                    String requestedName = ctx.pathParam("name");
 
                     for (Map<String, Object> inter : intersections) {
                         String districtName = (String) inter.get("District");
