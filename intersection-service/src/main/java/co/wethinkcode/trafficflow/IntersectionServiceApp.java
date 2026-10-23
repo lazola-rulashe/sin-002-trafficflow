@@ -1,10 +1,13 @@
 package co.wethinkcode.trafficflow;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.Javalin;
 import io.javalin.json.JsonMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -17,53 +20,49 @@ public class IntersectionServiceApp {
     public static List<Map<String, Object>> intersections;
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, InterruptedException {
         Javalin app = Javalin.create().start(7021);
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:7020/intersections"))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString()
+        );
+
+        JSONArray jsonArray = new JSONArray(response.body());
+        intersections = new ArrayList<>();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            intersections.add(jsonArray.getJSONObject(i).toMap());
+        }
 
         app.get("/health", ctx -> ctx.result("OK"));
 
-        app.get("/intersectios", ctx -> {
+        app.get("/intersections", ctx -> {
             ctx.json(intersections);
         });
 
-        app.get("/intersections/{Intersection_id}", ctx -> {
+        app.get("/intersections/{id}", ctx -> {
             try {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://localhost:7020/intersections"))
-                        .GET()
-                        .build();
-                HttpResponse<String> response = client.send(
-                        request,
-                        HttpResponse.BodyHandlers.ofString()
-                );
 
-                JSONArray jsonArray = new JSONArray(response.body());
-                intersections = new ArrayList<>();
-
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    intersections.add(jsonArray.getJSONObject(i).toMap());
-                }
-
-                String requestedId = ctx.pathParam("Intersection_id");
-
+                String requestedId = ctx.pathParam("id");
 
                 for (Map<String, Object> inter : intersections) {
-                    for (Map.Entry<String, Object> entry : inter.entrySet()) {
-                        String intersectionId = (String) inter.get("Intersection_id");
-                        if (requestedId.equals(intersectionId)){
-                            ctx.json(inter);
-                            ctx.status(200);
-                            return;
-                        }
-                        ctx.result("Intersection unknown");
-                        ctx.status(404);
-
+                    String intersectionId = (String) inter.get("id");
+                    if (requestedId.equals(intersectionId)) {
+                        ctx.json(inter);
+                        ctx.status(200);
+                        return;
                     }
                 }
 
+
             }catch(Exception e){
-                ctx.status(503).result("Ingestion service unavailable " + e.getMessage());
+                ctx.status(404).result("Intersection not found " + e.getMessage());
             }
 
                 });
