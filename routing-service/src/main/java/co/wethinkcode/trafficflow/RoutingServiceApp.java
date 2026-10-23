@@ -26,7 +26,7 @@ public class RoutingServiceApp {
         app.get("/intersections/{id}", ctx -> {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://localhost:7020/intersections/{id}"))
+                        .uri(URI.create("http://localhost:7021/intersections/{id}"))
                         .GET()
                         .build();
                 HttpResponse<String> response = client.send(
@@ -56,7 +56,7 @@ public class RoutingServiceApp {
             lastInterId = response2.body();
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:7023/congestion"))
+                    .uri(URI.create("http://localhost:7022/congestion"))
                     .GET()
                     .build();
 
