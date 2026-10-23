@@ -15,6 +15,7 @@ public class RoutingServiceApp {
     public static List<Map<String, Object>> intersections;
     public static String firstInterId;
     public static String lastInterId;
+    public static int congestionLevel;
 
     public static void main(String[] args) {
         Javalin app = Javalin.create().start(7023);
@@ -49,7 +50,7 @@ public class RoutingServiceApp {
                         HttpResponse.BodyHandlers.ofString()
                 );
 
-                ctx.result(response.body());
+                congestionLevel = Integer.parseInt(response.body());
 
             }catch(Exception e){
                 ctx.status(503).result("CongestionServiceApp is unreachable");
