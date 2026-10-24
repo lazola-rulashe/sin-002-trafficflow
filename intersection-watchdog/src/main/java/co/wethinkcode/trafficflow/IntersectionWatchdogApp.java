@@ -16,38 +16,53 @@ public class IntersectionWatchdogApp {
     private static final long HEARTBEAT_TIMEOUT_MS = 15000;
 
     public static void main(String[] args) {
-        try {
-            HeartbeatSubscriber subscriber = new HeartbeatSubscriber(new MessageListener() {
-                @Override
-                public void onMessage(Message message) {
-                    try {
-                        if (message instanceof TextMessage) {
-                            TextMessage textMessage = (TextMessage) message;
-                            JSONObject json = new JSONObject(textMessage.getText());
-                            lastHeartbeatTime = System.currentTimeMillis();
-                            alertTriggered = false;
-                            System.out.println("Heartbeat received from intersection-service");
-                        }
-                    } catch (Exception e) {
-                        System.err.println("Failed to process heartbeat message: " + e.getMessage());
-                    }
-                }
-            });
+        int maxRetries = 5;
+        int retryDelayMs = 2000;
 
-            Timer checkTimer = new Timer();
-            checkTimer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    long timeSinceLastHeartbeat = System.currentTimeMillis() - lastHeartbeatTime;
-                    if (timeSinceLastHeartbeat > HEARTBEAT_TIMEOUT_MS && !alertTriggered) {
-                        alertTriggered = true;
-                        System.err.println("ALERT: Intersection service heartbeat missed! Service may be down.");
+        for (int i = 0; i < maxRetries; i++) {
+            try {
+                HeartbeatSubscriber subscriber = new HeartbeatSubscriber(new MessageListener() {
+                    @Override
+                    public void onMessage(Message message) {
+                        try {
+                            if (message instanceof TextMessage) {
+                                TextMessage textMessage = (TextMessage) message;
+                                JSONObject json = new JSONObject(textMessage.getText());
+                                lastHeartbeatTime = System.currentTimeMillis();
+                                alertTriggered = false;
+                                System.out.println("Heartbeat received from intersection-service");
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Failed to process heartbeat message: " + e.getMessage());
+                        }
+                    }
+                });
+                System.out.println("Heartbeat subscriber initialized successfully");
+                break;
+            } catch (Exception e) {
+                System.err.println("Failed to initialize heartbeat subscriber (attempt " + (i + 1) + "/" + maxRetries + "): " + e.getMessage());
+                if (i < maxRetries - 1) {
+                    try {
+                        Thread.sleep(retryDelayMs);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                 }
-            }, 5000, 5000);
-        } catch (Exception e) {
-            System.err.println("Failed to initialize heartbeat subscriber: " + e.getMessage());
+            }
         }
+
+        Timer checkTimer = new Timer();
+        checkTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                long timeSinceLastHeartbeat = System.currentTimeMillis() - lastHeartbeatTime;
+                if (timeSinceLastHeartbeat > HEARTBEAT_TIMEOUT_MS && !alertTriggered) {
+                    alertTriggered = true;
+                    System.err.println("ALERT: Intersection service heartbeat missed! Service may be down.");
+                }
+            }
+        }, 5000, 5000);
 
         Javalin app = Javalin.create().start(7024);
 
