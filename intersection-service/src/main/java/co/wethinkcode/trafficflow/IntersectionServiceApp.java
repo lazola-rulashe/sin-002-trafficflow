@@ -1,5 +1,6 @@
 package co.wethinkcode.trafficflow;
 
+import co.wethinkcode.trafficflow.mq.HeartbeatPublisher;
 import io.javalin.Javalin;
 import io.javalin.json.JsonMapper;
 import org.json.JSONArray;
@@ -12,12 +13,33 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class IntersectionServiceApp {
     public static List<Map<String, Object>> intersections;
+    private static HeartbeatPublisher heartbeatPublisher;
 
 
     public static void main(String[] args) {
+        try {
+            heartbeatPublisher = new HeartbeatPublisher();
+            Timer heartbeatTimer = new Timer();
+            heartbeatTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        heartbeatPublisher.publishHeartbeat();
+                        System.out.println("Heartbeat sent");
+                    } catch (Exception e) {
+                        System.err.println("Failed to send heartbeat: " + e.getMessage());
+                    }
+                }
+            }, 0, 5000);
+        } catch (Exception e) {
+            System.err.println("Failed to initialize heartbeat publisher: " + e.getMessage());
+        }
+
         Javalin app = Javalin.create().start(7021);
 
         app.get("/health", ctx -> ctx.result("OK"));
