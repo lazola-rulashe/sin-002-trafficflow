@@ -52,9 +52,13 @@ public class IntersectionWatchdogApp {
         Javalin app = Javalin.create().start(7024);
 
         app.get("/health", ctx -> ctx.result("OK"));
+
+        app.get("/alert", ctx -> {
+            org.json.JSONObject response = new org.json.JSONObject();
+            response.put("alertTriggered", alertTriggered);
+            response.put("lastHeartbeatTime", lastHeartbeatTime);
+            response.put("intersectionServiceStatus", alertTriggered ? "DOWN" : "UP");
+            ctx.result(response.toString());
+        });
     }
 }
-
-// MQ TODO: subscribes to ActiveMQ queue MqConfig.HEARTBEAT_QUEUE at MqConfig.BROKER_URL
-// (see co.wethinkcode.trafficflow.mq.MqConfig) and alerts if a heartbeat from
-// intersection-service is missed or a message lands in the dead-letter queue.
