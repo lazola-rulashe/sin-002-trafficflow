@@ -22,22 +22,37 @@ public class IntersectionServiceApp {
 
 
     public static void main(String[] args) {
-        try {
-            heartbeatPublisher = new HeartbeatPublisher();
-            Timer heartbeatTimer = new Timer();
-            heartbeatTimer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
+        int maxRetries = 5;
+        int retryDelayMs = 2000;
+
+        for (int i = 0; i < maxRetries; i++) {
+            try {
+                heartbeatPublisher = new HeartbeatPublisher();
+                Timer heartbeatTimer = new Timer();
+                heartbeatTimer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        try {
+                            heartbeatPublisher.publishHeartbeat();
+                            System.out.println("Heartbeat sent");
+                        } catch (Exception e) {
+                            System.err.println("Failed to send heartbeat: " + e.getMessage());
+                        }
+                    }
+                }, 0, 5000);
+                System.out.println("Heartbeat publisher initialized successfully");
+                break;
+            } catch (Exception e) {
+                System.err.println("Failed to initialize heartbeat publisher (attempt " + (i + 1) + "/" + maxRetries + "): " + e.getMessage());
+                if (i < maxRetries - 1) {
                     try {
-                        heartbeatPublisher.publishHeartbeat();
-                        System.out.println("Heartbeat sent");
-                    } catch (Exception e) {
-                        System.err.println("Failed to send heartbeat: " + e.getMessage());
+                        Thread.sleep(retryDelayMs);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                 }
-            }, 0, 5000);
-        } catch (Exception e) {
-            System.err.println("Failed to initialize heartbeat publisher: " + e.getMessage());
+            }
         }
 
         Javalin app = Javalin.create().start(7021);
