@@ -9,10 +9,25 @@ public class CongestionServiceApp {
     private static CongestionPublisher publisher;
 
     public static void main(String[] args) {
-        try {
-            publisher = new CongestionPublisher();
-        } catch (Exception e) {
-            System.err.println("Failed to initialize MQ publisher: " + e.getMessage());
+        int maxRetries = 5;
+        int retryDelayMs = 2000;
+
+        for (int i = 0; i < maxRetries; i++) {
+            try {
+                publisher = new CongestionPublisher();
+                System.out.println("MQ publisher initialized successfully");
+                break;
+            } catch (Exception e) {
+                System.err.println("Failed to initialize MQ publisher (attempt " + (i + 1) + "/" + maxRetries + "): " + e.getMessage());
+                if (i < maxRetries - 1) {
+                    try {
+                        Thread.sleep(retryDelayMs);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+                }
+            }
         }
 
         Javalin app = Javalin.create().start(7022);
