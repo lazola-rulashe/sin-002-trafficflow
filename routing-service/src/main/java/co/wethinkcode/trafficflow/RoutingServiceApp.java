@@ -23,24 +23,39 @@ public class RoutingServiceApp {
     public static int cachedCongestionLevel = 0;
 
     public static void main(String[] args) {
-        try {
-            CongestionSubscriber subscriber = new CongestionSubscriber(new MessageListener() {
-                @Override
-                public void onMessage(Message message) {
-                    try {
-                        if (message instanceof TextMessage) {
-                            TextMessage textMessage = (TextMessage) message;
-                            JSONObject json = new JSONObject(textMessage.getText());
-                            cachedCongestionLevel = json.getInt("level");
-                            System.out.println("Updated congestion level from MQ: " + cachedCongestionLevel);
+        int maxRetries = 5;
+        int retryDelayMs = 2000;
+
+        for (int i = 0; i < maxRetries; i++) {
+            try {
+                CongestionSubscriber subscriber = new CongestionSubscriber(new MessageListener() {
+                    @Override
+                    public void onMessage(Message message) {
+                        try {
+                            if (message instanceof TextMessage) {
+                                TextMessage textMessage = (TextMessage) message;
+                                JSONObject json = new JSONObject(textMessage.getText());
+                                cachedCongestionLevel = json.getInt("level");
+                                System.out.println("Updated congestion level from MQ: " + cachedCongestionLevel);
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Failed to process congestion message: " + e.getMessage());
                         }
-                    } catch (Exception e) {
-                        System.err.println("Failed to process congestion message: " + e.getMessage());
+                    }
+                });
+                System.out.println("MQ subscriber initialized successfully");
+                break;
+            } catch (Exception e) {
+                System.err.println("Failed to initialize MQ subscriber (attempt " + (i + 1) + "/" + maxRetries + "): " + e.getMessage());
+                if (i < maxRetries - 1) {
+                    try {
+                        Thread.sleep(retryDelayMs);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                 }
-            });
-        } catch (Exception e) {
-            System.err.println("Failed to initialize MQ subscriber: " + e.getMessage());
+            }
         }
 
         Javalin app = Javalin.create().start(7023);
