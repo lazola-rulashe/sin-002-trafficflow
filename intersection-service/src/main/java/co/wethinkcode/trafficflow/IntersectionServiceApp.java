@@ -156,10 +156,5 @@ public class IntersectionServiceApp {
                 });
 
 
-                // TODO (Validates intersection/district names (source of truth).) // Add domain endpoints for intersection-service here.
-
-}
     }
-
-// MQ TODO: publishes a periodic heartbeat to ActiveMQ queue MqConfig.HEARTBEAT_QUEUE at
-// MqConfig.BROKER_URL (see co.wethinkcode.trafficflow.mq.MqConfig), consumed by intersection-watchdog.
+}
