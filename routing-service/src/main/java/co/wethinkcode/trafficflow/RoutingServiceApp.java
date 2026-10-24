@@ -68,62 +68,20 @@ public class RoutingServiceApp {
 
                 String requestedId = ctx.pathParam("id");
 
-
                 for (Map<String, Object> inter : intersections) {
-                    for (Map.Entry<String, Object> entry : inter.entrySet()) {
-                        String intersectionId1 = (String) inter.get("id");
-                        if (requestedId.equals(intersectionId1)) {
-                            firstInterId = intersectionId1;
-                            ctx.status(200);
-                            return;
-                        }
-                        ctx.result("Intersection unknown");
-                        ctx.status(404);
+                    String intersectionId = (String) inter.get("id");
+                    if (requestedId.equals(intersectionId)) {
+                        ctx.json(inter);
+                        ctx.status(200);
+                        return;
                     }
                 }
+
+                ctx.result("Intersection unknown");
+                ctx.status(404);
 
             }catch(Exception e){
-                ctx.status(404).result("Intersection ID unknown");
-            }
-
-        });
-
-        app.get("/intersections/{id}", ctx -> {
-            try {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("http://localhost:7021/intersections"))
-                        .GET()
-                        .build();
-                HttpResponse<String> response = client.send(
-                        request,
-                        HttpResponse.BodyHandlers.ofString()
-                );
-
-                JSONArray jsonArray = new JSONArray(response.body());
-                intersections = new ArrayList<>();
-
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    intersections.add(jsonArray.getJSONObject(i).toMap());
-                }
-
-                String requestedId = ctx.pathParam("id");
-
-                for (Map<String, Object> inter : intersections) {
-                    for (Map.Entry<String, Object> entry : inter.entrySet()) {
-                        String intersectionId1 = (String) inter.get("id");
-                        if (requestedId.equals(intersectionId1)) {
-                            lastInterId = intersectionId1;
-                            ctx.status(200);
-                            return;
-                        }
-                        ctx.result("Intersection unknown");
-                        ctx.status(404);
-                    }
-                }
-
-            }catch (Exception e){
-                ctx.status(404).result("Intersection ID unknown");
+                ctx.status(503).result("Intersection service unavailable");
             }
 
         });
