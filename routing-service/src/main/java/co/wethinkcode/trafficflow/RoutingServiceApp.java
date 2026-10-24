@@ -92,8 +92,62 @@ public class RoutingServiceApp {
             ctx.result(response.toString());
         });
 
-        app.get("/route/{fistId}/{lastId}", ctx -> {
+        app.get("/route/{firstId}/{lastId}", ctx -> {
+            try {
+                String firstId = ctx.pathParam("firstId");
+                String lastId = ctx.pathParam("lastId");
 
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create("http://localhost:7021/intersections"))
+                        .GET()
+                        .build();
+                HttpResponse<String> response = client.send(
+                        request,
+                        HttpResponse.BodyHandlers.ofString()
+                );
+
+                JSONArray jsonArray = new JSONArray(response.body());
+                intersections = new ArrayList<>();
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    intersections.add(jsonArray.getJSONObject(i).toMap());
+                }
+
+                boolean firstExists = false;
+                boolean lastExists = false;
+
+                for (Map<String, Object> inter : intersections) {
+                    String intersectionId = (String) inter.get("id");
+                    if (firstId.equals(intersectionId)) {
+                        firstExists = true;
+                    }
+                    if (lastId.equals(intersectionId)) {
+                        lastExists = true;
+                    }
+                }
+
+                if (!firstExists || !lastExists) {
+                    ctx.status(404).result("One or both intersections not found");
+                    return;
+                }
+
+                int baseTime = 10;
+                int congestionMultiplier = cachedCongestionLevel + 1;
+                int estimatedTime = baseTime * congestionMultiplier;
+
+                JSONObject result = new JSONObject();
+                result.put("from", firstId);
+                result.put("to", lastId);
+                result.put("congestionLevel", cachedCongestionLevel);
+                result.put("estimatedTimeMinutes", estimatedTime);
+
+                ctx.json(result);
+                ctx.status(200);
+
+            } catch (Exception e) {
+                ctx.status(503).result("Intersection service unavailable");
+            }
         });
 
 
